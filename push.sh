@@ -140,10 +140,12 @@ case "$2" in
         helm repo add $REPO_NAME_RELEASE $REPO_URL_RELEASE --username $USERNAME --password $PASSWORD
         helm repo add $REPO_NAME_SNAPSHOT $REPO_URL_SNAPSHOT --username $USERNAME --password $PASSWORD
 
-        if [[ "$CHART_PACKAGE" == *"release"* ]]; then
-            REPO_URL=$REPO_URL_RELEASE
-        else
-            REPO_URL=$REPO_URL_SNAPSHOT
+        if [[ "$REPO" == "." ]]; then
+            if [[ "$CHART_PACKAGE" == *"release"* ]]; then
+                REPO_URL=$REPO_URL_RELEASE
+            else
+                REPO_URL=$REPO_URL_SNAPSHOT
+            fi
         fi
 
         echo "Pushing $CHART to repo $REPO_URL..."
