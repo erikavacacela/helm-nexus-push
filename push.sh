@@ -89,6 +89,12 @@ declare CMD
 declare AUTH
 declare CHART
 
+# Add repos 
+declare REPO_NAME_RELEASE="cf-helm-releases"
+declare REPO_NAME_SNAPSHOT="cf-helm-snapshots"
+declare REPO_URL_RELEASE="https://cf1hlmnxs.favorita.ec/repository/helm-releases/"
+declare REPO_URL_SNAPSHOT="https://cf1hlmnxs.favorita.ec/repository/helm-snapshots/"
+
 case "$2" in
     login)
         if [[ -z "$USERNAME" ]]; then
@@ -129,6 +135,15 @@ case "$2" in
             CHART_PACKAGE="$(helm package "$CHART" | cut -d":" -f2 | tr -d '[:space:]')"
         else
             CHART_PACKAGE="$CHART"
+        fi
+
+        helm repo add $REPO_NAME_RELEASE $REPO_URL_RELEASE --username $USERNAME --password $PASSWORD
+        helm repo add $REPO_NAME_SNAPSHOT $REPO_URL_SNAPSHOT --username $USERNAME --password $PASSWORD
+
+        if [[ "$CHART_PACKAGE" == *"release"* ]]; then
+            REPO_URL = $REPO_URL_RELEASE
+        else
+            REPO_URL = $REPO_URL_SNAPSHOT
         fi
 
         echo "Pushing $CHART to repo $REPO_URL..."
